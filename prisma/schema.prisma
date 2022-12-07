@@ -1,0 +1,263 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id  String  @id @default(auto()) @db.ObjectId @map("_id")
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id  String  @id @default(auto()) @db.ObjectId @map("_id")
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id  String  @id @default(auto()) @db.ObjectId @map("_id")
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+
+  firstName     String?
+  lastName      String?
+  password  String
+
+  contactNumber String
+
+  hotelsManaged Hotel[]
+
+  bookings Booking[]
+  ratings Rating[]
+
+  subscribedNewsletter Boolean @default(false)
+
+  role  Role  @default(TOURIST)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  id  String  @id @default(auto()) @db.ObjectId @map("_id")
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+enum Role {
+  TOURIST
+  HOTEL_MANAGER
+}
+
+model Hotel {
+  id  String  @id @default(auto()) @db.ObjectId @map("_id")
+  name String
+
+  location String
+  latitude Float?
+  longitude Float?
+
+  description String?
+
+  facilities String[]
+  photos  Photo[]
+
+  unavailableDates DateTime[] @db.Date
+  unavailableDaysWeekly Int[]
+
+  manager User @relation(fields: [managerId], references: [id])
+  managerId String
+
+  rooms Room[]
+  roomTypes RoomType[]
+
+  bookings Booking[]
+
+  totalRating Float @default(0)
+  ratings Rating[]
+
+  minPrice Float @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RoomType {
+  id  String  @id @default(auto()) @db.ObjectId @map("_id")
+  
+  name  String
+  description String?
+
+  price Float @default(0)
+
+  singleBed Int @default(0)
+  twinBed Int @default(0)
+  doubleBed Int @default(0)
+  fullBed Int @default(0)
+  queenBed Int @default(0)
+  kingBed Int @default(0)
+  californiaKingBed Int @default(0)
+
+  maxGuests Int @default(0)
+
+  availableRooms Int @default(0)
+
+  hotel Hotel? @relation(fields: [hotelId], references: [id])
+  hotelId String? @db.ObjectId
+
+  rooms Room[]
+  bookings Booking[]
+  photos Photo[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Photo {
+  id  String  @id @default(auto()) @db.ObjectId @map("_id")
+
+  originalFileName String
+  caption String?
+
+  hotel Hotel? @relation(fields: [hotelId], references: [id])
+  hotelId String? @db.ObjectId
+
+  roomType RoomType? @relation(fields: [roomTypeId], references: [id])
+  roomTypeId String? @db.ObjectId
+}
+
+model Room {
+  id  String  @id @default(auto()) @db.ObjectId @map("_id")
+
+  physicalRoomNumber  Int
+
+  hotel Hotel? @relation(fields: [hotelId], references: [id])
+  hotelId String? @db.ObjectId
+
+  roomType RoomType @relation(fields: [roomTypeId], references: [id])
+  roomTypeId String @db.ObjectId
+
+  bookings Booking[] @relation(fields: [bookingIds], references: [id])
+  bookingIds String[] @db.ObjectId
+
+  totalRating Float @default(0)
+  ratings Rating[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Booking {
+  id  String  @id @default(auto()) @db.ObjectId @map("_id")
+
+  checkIn   DateTime
+  checkOut  DateTime
+
+  adults  Int @default(0)
+  children  Int @default(0)
+
+  user User @relation(fields: [userId], references: [id])
+  userId String @db.ObjectId
+
+  rooms Room[]  @relation(fields: [roomIds], references: [id])
+  roomIds String[]  @db.ObjectId
+
+  roomType RoomType @relation(fields: [roomTypeId], references: [id])
+  roomTypeId String @db.ObjectId
+
+  hotel Hotel @relation(fields: [hotelId], references: [id])
+  hotelId String
+
+  bills Bill[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Rating {
+  id  String  @id @default(auto()) @db.ObjectId @map("_id")
+
+  user User @relation(fields: [userId], references: [id])
+  userId String
+
+  hotel Hotel @relation(fields: [hotelId], references: [id])
+  hotelId String
+
+  room Room @relation(fields: [roomId], references: [id])
+  roomId String @db.ObjectId
+
+  value Int
+  description String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Bill {
+  id  String  @id @default(auto()) @db.ObjectId @map("_id")
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+  bookingId String @db.ObjectId
+
+  description String?
+
+  total Float
+
+  payment BillPayment?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum PaymentMethod {
+  CREDIT_CARD
+  CASH
+}
+
+model BillPayment {
+  id  String  @id @default(auto()) @db.ObjectId @map("_id")
+
+  method  PaymentMethod @default(CREDIT_CARD)
+
+  cardName  String?
+  cardNumber String?
+  cardExp String?
+  cardCVV String?
+
+  bill Bill @relation(fields: [billId], references: [id])
+  billId String @db.ObjectId @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
