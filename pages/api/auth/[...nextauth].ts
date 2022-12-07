@@ -57,7 +57,8 @@ export const authOptions = {
        user: {...token}
       }
     }
-  }
+  },
+  secret: process.env.SECRET,
 }
 
 // @ts-expect-error
