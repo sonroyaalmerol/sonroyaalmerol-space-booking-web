@@ -132,7 +132,7 @@ export default function Profile({ hotel } : { hotel: (Hotel & {
               <HotelEditButton hotel={hotel} mr={2} />
               <RoomTypeAddButton mr={2} />
               <RoomAddButton mr={2} />
-              <Button mr={2}>View Bookings</Button>
+              <Button mr={2} disabled>View Bookings</Button>
             </Box>
           ) }
           

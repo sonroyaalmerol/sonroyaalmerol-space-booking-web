@@ -60,7 +60,7 @@ const RoomTypeAddButton: React.FC<ButtonProps> = (props) => {
 
   return (
     <>
-      <Button {...props} onClick={onOpen}>Add Room Type</Button>
+      <Button {...props} onClick={onOpen} disabled>Add Room Type</Button>
 
       <Modal
         initialFocusRef={initialRef}

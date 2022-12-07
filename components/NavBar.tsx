@@ -194,10 +194,6 @@ export default function NavBar() {
     if (session.status === 'authenticated') {
       items.push(
         {
-          label: 'My Bookings',
-          href: '/bookings'
-        },
-        {
           label: 'My Profile',
           href: `/profile/${session.data?.user?.email}`
         }
