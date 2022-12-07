@@ -1,41 +1,25 @@
 import { Box, Image, Link, Text } from "@chakra-ui/react";
+import { Photo, RoomType } from "@prisma/client";
 import HotelImage from "./Image";
 
-export interface Hotel {
-  id: number | string;
-  name: string;
-  image: string;
-  location: string;
-  rating: string;
-  price: string;
-}
 
-const HotelCard: React.FC<Hotel> = ({ id, name, image, location, rating, price }) => (
+const RoomCard: React.FC<RoomType & { photos: Photo[] }> = (props) => (
   <Box width="100%" borderWidth="1px" rounded="lg" overflow="hidden">
-    <HotelImage src={image} />
+    <HotelImage src={`/api/photos/${props.photos[0]?.id}`} />
     <Box p="6">
       <Box display="flex" alignItems="baseline">
-        <Link fontSize="xl" fontWeight="bold" href={`/hotels/${id}`}>
-          {name}
-        </Link>
-        <Box
-          color="orange.500"
-          fontWeight="bold"
-          letterSpacing="wide"
-          ml="2"
-          textTransform="uppercase"
-        >
-          {rating}
-        </Box>
+        <Text fontSize="xl" fontWeight="bold">
+          {props.name}
+        </Text>
       </Box>
       <Box>
-        <Text>{location}</Text>
+        <Text>{props.description}</Text>
       </Box>
       <Box>
-        <Text>{price}</Text>
+        <Text>{props.price}</Text>
       </Box>
     </Box>
   </Box>
 );
 
-export default HotelCard
+export default RoomCard

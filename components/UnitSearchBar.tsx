@@ -15,6 +15,7 @@ import { SingleDatepicker } from 'chakra-dayzed-datepicker'
 import { useRouter } from "next/router"
 import React from "react";
 import { Photo, RoomType } from "@prisma/client";
+import RoomCard from "./RoomCard";
 
 export default function UnitSearchBar() {
   const router = useRouter()
@@ -148,6 +149,14 @@ export default function UnitSearchBar() {
         </Flex>
         <Button type="submit" w="100%" mt="2rem" isLoading={loading}>Search</Button>
       </form>
+
+      <Flex align="center" justifyContent="space-between" wrap="wrap" mt={6}>
+        {units.map(unit => (
+          <Box key={unit.id} p="5" w={{ base: "100%", md: "33%" }}>
+            <RoomCard {...unit} />
+          </Box>
+        ))}
+      </Flex>
     </Box>
   );
 }
