@@ -9,6 +9,16 @@ import Hero from '../components/Home/Hero'
 import HotelList from '../components/HotelList';
 import prisma from '../utils/prisma';
 
+/**
+   * This page shows recommended hotels.
+   * The recommended hotels are the hotels with the highest ratings.
+   * 
+   *
+   * @param props - This is an object containing the hotels' information.
+   * 
+   * @returns A React Component containing the index page.
+   *
+   */
 export default function Home({ recommendedHotels }: { recommendedHotels: (Hotel & {photos: Photo[]})[] }) {
   return (
     <div>
@@ -39,6 +49,7 @@ export default function Home({ recommendedHotels }: { recommendedHotels: (Hotel 
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  // Get the recommended hotels
   const recommendedHotels = await prisma.hotel.findMany({
     include: {
       photos: true,

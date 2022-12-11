@@ -24,6 +24,8 @@ const HotelEditButton: React.FC<ButtonProps & { hotel: Hotel }> = (props) => {
     },
     onSubmit: async (values) => {
       setLoading(true);
+      
+      // Get the hotel's information from the database
       const res = await fetch(`/api/hotels/${hotel.id}`, {
         method: 'POST',
         body: JSON.stringify(values)

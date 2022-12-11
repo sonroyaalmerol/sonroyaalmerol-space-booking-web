@@ -10,6 +10,15 @@ import Head from 'next/head'
 import { GetServerSideProps } from 'next/types'
 import prisma from '../../utils/prisma'
 
+/**
+   * This page shows the current logged in user's profile.
+   * 
+   *
+   * @param props - This is an object containing a user's profile.
+   * 
+   * @returns A React Component containing a user's profile.
+   *
+   */
 export default function Profile({ user } : { user: User }) {
   return (
     <div>
@@ -41,7 +50,8 @@ export default function Profile({ user } : { user: User }) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { params } = context
-
+  
+  // If no params are passed, redirect to home page
   if (!params) {
     return {
       redirect: {
@@ -51,6 +61,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   }
 
+  // Email is required
   if (!('email' in params)) {
     return {
       redirect: {
@@ -62,6 +73,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const email = params.email
 
+  // Get the user from the database
   const user = await prisma.user.findUnique({
     where: {
       email: email as string

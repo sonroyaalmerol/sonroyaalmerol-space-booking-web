@@ -6,6 +6,10 @@ import prisma from '../../../utils/prisma';
 import bcrypt from 'bcrypt';
 import { JWT } from "next-auth/jwt";
 
+/**
+   * This is the NextAuth configuration object.
+   * 
+   */
 export const authOptions = {
   providers: [
     CredentialsProvider({

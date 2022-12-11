@@ -5,10 +5,23 @@ import prisma from '../../../utils/prisma'
 
 const IMAGE_DIRECTORY = "./public/photos";
 
+/**
+   * Streams the image to the client.
+   * This takes the image from the public/photos directory.
+   *
+   * @remarks
+   * This method is part of the image upload system.
+   *
+   * @param req - Next API route request object
+   * @param res - Next API route response object
+   * @returns A JSON object containing the user's information or an error message.
+   *
+   */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { id } = req.query;
   const filePath = path.join(IMAGE_DIRECTORY, `${id as string}.jpg`);
 
+  // Check if the image exists
   const photo = await prisma.photo.findUnique({
     where: {
       id: id as string
@@ -17,6 +30,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   // Check if the image exists
   if (!fs.existsSync(filePath)) {
+    // If it doesn't exist in the directory, delete it from the database
     await prisma.photo.delete({
       where: {
         id: id as string
@@ -26,12 +40,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(404).send("Image not found");
   }
 
+  // If it doesn't exist in the database, delete it from the directory
   if (!photo) {
     fs.unlinkSync(filePath);
 
     return res.status(404).send("Image not found");
   }
 
+  // If the image exists, stream it to the client
   if (req.method === 'GET') {
     try {
       // Serve the image
@@ -48,6 +64,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(500).send(error);
     }
   } else if (req.method === 'DELETE') {
+    // Delete the image from the directory
     try {
       fs.unlinkSync(filePath);
 
@@ -62,7 +79,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
   }
   
-
+  // If the method is not GET or DELETE, return an error
   return res.status(405).json({ error: 'Method not allowed' });
 };
 

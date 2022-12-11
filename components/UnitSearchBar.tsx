@@ -27,8 +27,10 @@ export default function UnitSearchBar() {
   const [loading, setLoading] = React.useState(false)
 
   const getInitialValues = () => {
+    // Get the search cookie
     const search = getCookie('search')
     
+    // If the cookie doesn't exist, return the default values
     if (!search) {
       return {
         city: "",
@@ -40,6 +42,7 @@ export default function UnitSearchBar() {
       }
     }
 
+    // If the cookie exists, parse it and return the values
     const parsedSearch = JSON.parse(search.toString())
 
     return {
@@ -55,6 +58,7 @@ export default function UnitSearchBar() {
   const formik = useFormik({
     initialValues: getInitialValues(),
     onSubmit: (values) => {
+      // Set the search cookie
       setCookie('search', JSON.stringify(values))
       handleSearch()
     },
@@ -62,6 +66,7 @@ export default function UnitSearchBar() {
 
   const handleSearch = async () => {
     setLoading(true)
+    // Get the units
     const units = await fetch('/api/hotels/rooms', {
       method: 'POST',
       body: JSON.stringify({
@@ -73,6 +78,7 @@ export default function UnitSearchBar() {
         rooms: formik.values.rooms,
       })
     })
+    // Parse the units
     const unitsJson = await units.json()
     setLoading(false)
     setUnits(unitsJson)

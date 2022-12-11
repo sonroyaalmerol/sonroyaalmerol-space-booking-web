@@ -26,6 +26,15 @@ import RoomTypeAddButton from '../../components/Management/RoomTypeAddButton'
 import RoomAddButton from '../../components/Management/RoomAddButton'
 import { useRouter } from 'next/router'
 
+/**
+   * This page shows the hotel's details and information.
+   * 
+   *
+   * @param props - This is an object containing the hotel's information.
+   * 
+   * @returns A React Component containing the hotel's information.
+   *
+   */
 export default function Profile({ hotel } : { hotel: (Hotel & {
   photos: Photo[];
   rooms: Room[];
@@ -153,6 +162,7 @@ export default function Profile({ hotel } : { hotel: (Hotel & {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { params } = context
 
+  // If no params are passed, redirect to home page
   if (!params) {
     return {
       redirect: {
@@ -162,6 +172,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   }
 
+  // If no id is passed, redirect to home page
   if (!('id' in params)) {
     return {
       redirect: {
@@ -173,12 +184,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const id = params.id
 
+  // If id is not valid, redirect to home page
   if (!ObjectId.isValid(id as string)) {
     return {
       notFound: true
     }
   }
 
+  // Get the hotel with the id
   const hotel = await prisma.hotel.findUnique({
     where: {
       id: id as string

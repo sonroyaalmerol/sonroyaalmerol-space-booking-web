@@ -10,6 +10,15 @@ import HotelList from '../../components/HotelList';
 import prisma from '../../utils/prisma';
 import { authOptions } from "../api/auth/[...nextauth]"
 
+/**
+   * This page shows the current user's hotels being managed.
+   * 
+   *
+   * @param props - This is an object containing the hotels' information.
+   * 
+   * @returns A React Component containing the hotels' information.
+   *
+   */
 export default function Home({ hotels }: { hotels: (Hotel & {photos: Photo[]})[] }) {
   return (
     <div>
@@ -43,6 +52,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   // @ts-expect-error
   const session = await unstable_getServerSession(req, res, authOptions)
 
+  // If the user is not a hotel manager, redirect to the home page
   if (session?.user?.role !== Role.HOTEL_MANAGER) {
     return {
       redirect: {
@@ -52,6 +62,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   }
 
+  // Get the hotels being managed by the current user
   const hotels = await prisma.hotel.findMany({
     where: {
       managerId: session.user.id,

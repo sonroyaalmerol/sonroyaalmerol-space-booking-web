@@ -13,6 +13,13 @@ import { signIn, useSession } from "next-auth/react"
 import React from "react";
 import { useRouter } from "next/router";
 
+/**
+   * This page shows the user login form.
+   * 
+   * 
+   * @returns A React Component containing the user login form.
+   *
+   */
 export default function Login() {
   const [loading, setLoading] = React.useState(false);
   const toast = useToast()

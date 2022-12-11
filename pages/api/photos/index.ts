@@ -5,13 +5,13 @@ import { Photo } from "@prisma/client";
 import prisma from '../../../utils/prisma'
 import { ObjectId } from "mongodb";
 
+// Directory to store the uploaded photos
 const IMAGE_DIRECTORY = "./public/photos";
 
+// Array to store the photo IDs
 const photoIds: { objectId: ObjectId, origName: string }[] = [];
 
-// generate mongodb id for filename
-// add filter for jpeg only
-
+// Configure the multer middleware
 const storage = multer.diskStorage({
   destination: IMAGE_DIRECTORY,
   filename: (req, file, cb) => {
@@ -25,6 +25,7 @@ const storage = multer.diskStorage({
   },
 })
 
+// Initialize the multer middleware
 const upload = multer({
   storage,
   fileFilter: function (req, file, cb) {
@@ -35,10 +36,24 @@ const upload = multer({
   }
 });
 
+// Initialize the handler
 const handler = nextConnect();
 
+// Use the multer middleware
 handler.use(upload.any());
 
+/**
+   * Uploads the image to the server using multer.
+   * The file name is the MongoDB ObjectID of the newly created entry.
+   *
+   * @remarks
+   * This method is part of the image upload system.
+   *
+   * @param req - Next API route request object with the image files
+   * @param res - Next API route response object
+   * @returns A JSON object containing the user's information or an error message.
+   *
+   */
 handler.post(async (req: NextApiRequest & { files: Express.Multer.File[] }, res: NextApiResponse) => {
   try {
     const uploadedImages: Photo[] = []

@@ -1,5 +1,6 @@
 import { extendTheme } from '@chakra-ui/react'
 
+// Global style overrides
 const colors = {
   brand: {
     900: '#1a365d',

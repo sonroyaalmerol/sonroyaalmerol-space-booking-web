@@ -6,7 +6,10 @@ const HotelImage: React.FC<ImageProps> = (props) => {
 
   const checkImage = (url: string) => {
     return new Promise<boolean>((resolve) => {
+      // Create a new image
       var image = new Image();
+
+      // When the image loads, check if it is broken
       image.onload = function() {
         if (image.width > 0) {
           resolve(true)
@@ -15,11 +18,14 @@ const HotelImage: React.FC<ImageProps> = (props) => {
       image.onerror = function() {
         resolve(false)
       }
+
+      // Set the image source
       image.src = url;
     })
   }
 
   React.useEffect(() => {
+    // Check if the image exists
     checkImage(props.src as string).then((exists) => {
       if (!exists) {
         setSrc("https://picsum.photos/id/57/1280/720/?grayscale&blur=10")

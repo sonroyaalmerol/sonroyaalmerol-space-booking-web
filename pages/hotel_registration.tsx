@@ -13,6 +13,13 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React from "react";
 
+/**
+   * This page shows the hotel registration form.
+   * 
+   * 
+   * @returns A React Component containing the hotel registration form.
+   *
+   */
 export default function HotelRegistration() {
   const [loading, setLoading] = React.useState(false);
   const toast = useToast()

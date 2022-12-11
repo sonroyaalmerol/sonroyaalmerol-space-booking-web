@@ -6,6 +6,17 @@ import validate from 'validator';
 import { unstable_getServerSession } from "next-auth/next"
 import { authOptions } from "./[...nextauth]"
 
+/**
+   * Registers a new user given the necessary information.
+   *
+   * @remarks
+   * This method is part of the authentication system.
+   *
+   * @param req - Next API route request object
+   * @param res - Next API route response object
+   * @returns A JSON object containing the user's information or an error message.
+   *
+   */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });

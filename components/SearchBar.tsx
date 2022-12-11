@@ -18,8 +18,10 @@ export default function SearchBar() {
   const router = useRouter()
 
   const getInitialValues = () => {
+    // Get the search cookie
     const search = getCookie('search')
     
+    // If the cookie doesn't exist, return the default values
     if (!search) {
       return {
         city: "",
@@ -31,6 +33,7 @@ export default function SearchBar() {
       }
     }
 
+    // If the cookie exists, parse it and return the values
     const parsedSearch = JSON.parse(search.toString())
 
     return {
@@ -46,7 +49,10 @@ export default function SearchBar() {
   const formik = useFormik({
     initialValues: getInitialValues(),
     onSubmit: (values) => {
+      // Set the search cookie
       setCookie('search', JSON.stringify(values))
+
+      // Redirect to the search page
       router.push({
         pathname: "/search",
         query: {

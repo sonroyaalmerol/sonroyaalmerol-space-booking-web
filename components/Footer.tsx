@@ -46,7 +46,7 @@ const Footer = () => {
             </Heading>
             <List styleType="none" spacing={2}>
               <ListItem>
-                <Link href="#">Home</Link>
+                <Link href="/">Home</Link>
               </ListItem>
             </List>
           </Stack>

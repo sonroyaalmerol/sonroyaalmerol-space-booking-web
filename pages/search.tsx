@@ -9,6 +9,16 @@ import HeroSmall from '../components/HeroSmall';
 import HotelList from '../components/HotelList';
 import prisma from '../utils/prisma';
 
+
+/**
+   * This page shows the search results for a location query.
+   * 
+   *
+   * @param props - This is an object containing the list of hotels and the location being searched.
+   * 
+   * @returns A React Component containing a list of the query results.
+   *
+   */
 export default function Search({ hotels, location }: { hotels: (Hotel & {photos: Photo[]})[], location: string }) {
   return (
     <div>
@@ -52,6 +62,7 @@ function exclude<Hotel, Key extends keyof Hotel>(
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { query } = context
 
+  // Redirect to home page if query is empty
   if (!query.location || !query.check_in || !query.check_out || !query.guests || !query.rooms) {
     return {
       redirect: {
@@ -61,6 +72,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   }
 
+  // Get all bookings that overlap with the query
   const bookings = await prisma.booking.findMany({
     where: {
       OR: [
@@ -83,6 +95,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   })
 
+  // Get all hotels that are not booked and match the query
   const rawHotels = await prisma.hotel.findMany({
     where: {
       id: {
@@ -113,8 +126,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     ]
   })
 
+  // Remove createdAt and updatedAt from hotels
   const hotels = rawHotels.map(hotel => exclude(hotel, ['createdAt', 'updatedAt']))
 
+  // Return the hotels and the location being searched
   return {
     props: {
       hotels,

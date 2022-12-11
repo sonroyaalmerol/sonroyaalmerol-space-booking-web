@@ -13,6 +13,13 @@ import {
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 
+/**
+   * This page shows the user registration form.
+   * 
+   * 
+   * @returns A React Component containing the user registration form.
+   *
+   */
 export default function Register() {
   const [loading, setLoading] = React.useState(false);
   const toast = useToast()
