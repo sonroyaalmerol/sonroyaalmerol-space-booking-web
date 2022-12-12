@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import fs from "fs";
 import path from "path";
 import prisma from '../../../utils/prisma'
+import { Photo } from "@prisma/client";
 
 const IMAGE_DIRECTORY = "./public/photos";
 
@@ -22,11 +23,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const filePath = path.join(IMAGE_DIRECTORY, `${id as string}.jpg`);
 
   // Check if the image exists
-  const photo = await prisma.photo.findUnique({
-    where: {
-      id: id as string
-    }
-  })
+  let photo: Photo | null = null;
+
+  // Check if the image exists in the database
+  try {
+    photo = await prisma.photo.findUnique({
+      where: {
+        id: id as string
+      }
+    })
+  } catch (err) {
+    return res.status(404).send("Image not found");
+  }
+  
 
   // Check if the image exists
   if (!fs.existsSync(filePath)) {
